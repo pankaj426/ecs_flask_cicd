@@ -50,16 +50,11 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Extract tag
-        shell: bash
-        run: echo "##[set-output name=release_tag;]$(echo ${GITHUB_REF#refs/tags/})"
-        id: extract_tag
-
       - name: Build, tag, and push image to amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ecr-action
-          IMAGE_TAG: ${{ steps.extract_tag.outputs.release_tag }}
+          IMAGE_TAG: latest
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY .
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
